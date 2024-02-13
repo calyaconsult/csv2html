@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="xml-to-html-table.xsl"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.1.1
+- https://www.phpmyadmin.net
+-
+- Host: database:3306
+- Erstellungszeit: 12. Feb 2024 um 09:55
+- Server-Version: 8.0.27
+- PHP-Version: 7.4.20
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="docker" collation="utf8mb4_0900_ai_ci" charset="utf8mb4">
+            <pma:table name="ASE-Sitemap-Feed-A">
+                CREATE TABLE `ASE-Sitemap-Feed-A` (
+                  `Date` date NOT NULL,
+                  `WDay` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                  `Article ID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                  `Portal` varchar(20) NOT NULL,
+                  `Section` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                  `Article URL` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                  `Mod Time` varchar(25) NOT NULL,
+                  `Printed` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                  PRIMARY KEY (`Article ID`,`Mod Time`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - Datenbank: 'docker'
+    -->
+    <database name="docker">
+        <!-- Tabelle ASE-Sitemap-Feed-A -->
+        <table name="ASE-Sitemap-Feed-A">
+            <column name="Date">2022-02-28</column>
+            <column name="WDay">Mon</column>
+            <column name="Article ID">ax-2073269</column>
+            <column name="Portal">XCvhz5</column>
+            <column name="Section">localnews</column>
+            <column name="Article URL">XCvhz5/sections/localnews/?article-id=2073269</column>
+            <column name="Mod Time">2022-02-28T09:39:05.602Z</column>
+            <column name="Printed">1</column>
+        </table>
+        <table name="ASE-Sitemap-Feed-A">
+            <column name="Date">2021-12-14</column>
+            <column name="WDay">Tue</column>
+            <column name="Article ID">ax-2151435</column>
+            <column name="Portal">XCvhz5</column>
+            <column name="Section">localnews</column>
+            <column name="Article URL">XCvhz5/sections/localnews/?article-id=2151435</column>
+            <column name="Mod Time">2021-12-14T11:44:49.525Z</column>
+            <column name="Printed">0</column>
+        </table>
+    </database>
+</pma_xml_export>

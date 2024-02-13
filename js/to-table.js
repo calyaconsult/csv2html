@@ -10,7 +10,7 @@ function generateTable(parser,obj) {
     p = 'Papa Parse';
     data = (typeof obj.data[obj.data.length-1]["Filename"]==="undefined") ? obj.data.slice(0,obj.data.length-1) : obj.data;
   }
-  var result = `<h3>Aus CSV mit ${p} generierte Tabelle</h3><table class="customTable" id="table-bsp-2">
+  var result = `<h3>Aus CSV mit ${p} generierte Tabelle (${data.length} Zeilen)</h3><table class="customTable" id="table-bsp-2">
     <thead>
       <tr>
         @header
