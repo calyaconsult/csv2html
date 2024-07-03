@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+  <html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <title>CSV Parsing with PAPA Parse</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="css/html5-reset.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/standard.css">
+    <script src="js/to-table.js"></script>
+    <style>
+      .annotation {
+        margin-top: .75rem;
+        margin-left: 1rem;
+        background-color: #eee;
+      }
+      .control {
+        margin-top: .75rem;
+        margin-bottom: .75rem;
+      }
+    </style>
+  </head>
+<body>
+<h1>CSV Parsing with PAPA Parse</h1>
+<p>From: https://codepen.io/mauriciolobo/pen/ZEWXady</p>
+<p>Parser: https://www.papaparse.com/</p>
+<p>Navigation <a href="csv-reader-with-d3.html">csv-reader-with-d3.html</a></p>
+<div class="annotation">
+<p><strong>Achtung:</strong> Der Papa.parse Reader toleriert keine leeren Zeilen, auch nicht am Fileende. Der Atom-Editor setzt beim Speichern aber immer eine leere Zeile ans Fileende. Abhilfe schafft nur der `Code` Editor</p>
+<p>Das Problem kann entschärft werden, wenn wir die Funktion <code>generateTable(data.meta.fields, data.data);</code> auch dann ausführen, wenn beim Parsen ein Fehler auftritt.</p>
+<p>Alter Code<br>
+   <pre><code>    if (data.errors.length) {
+         document.getElementById('errorMessage').innerHTML = "* Error parsing CSV: " + JSON.stringify(data.errors);
+         console.error(data.errors);
+       } else {
+         generateTable(data.meta.fields, data.data);
+       }
+
+</code></pre>
+</p>
+<p>Neuer Code<br>
+   <pre><code>    if (data.errors.length) {
+         document.getElementById('errorMessage').innerHTML = "* Error parsing CSV: " + JSON.stringify(data.errors);
+         console.error(data.errors);
+       } else {
+
+       }
+   generateTable(data.meta.fields, data.data);
+</code></pre>
+</p>
+</div>
+<!--p>This snippet will read the csv file and will show as a table.</p-->
+<p>This can be used to preview data, to validate before upload, async upload data without sending to the server. All client side.</p>
+<div class="control">
+<input type="file" id="myfile" accept=".csv">
+<div>
+  <span id="errorMessage" style="color:red; font-weight: 500"></span>
+</div>
+</div>
+<hr>
+<div id="result"></div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js'></script>
+<script id="rendered-js" >
+//PAPA Parser (https://www.papaparse.com/) used to convert TEXT to CSV
+
+console.clear();
+
+var fileInput = document.getElementById("myfile");
+
+fileInput.addEventListener("change", readFile);
+
+function readFile() {
+  document.getElementById('errorMessage').innerHTML = "";
+  var file = document.getElementById("myfile").files[0];
+  var reader = new FileReader();
+  content = reader.readAsText(file);
+  reader.onload = function () {
+    var data = Papa.parse(reader.result, { header: true });
+    if (data.errors.length) {
+      document.getElementById('errorMessage').innerHTML = "* Error parsing CSV: " + JSON.stringify(data.errors);
+      console.error(data.errors);
+    } else {
+      document.getElementById('errorMessage').innerHTML = "* Data parsed successfully *";
+    }
+    generateTable("PP",data);
+  };
+}
+
+</script>

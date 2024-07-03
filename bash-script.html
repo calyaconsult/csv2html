@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>CSV nach HTML</title>
+  <meta name="description" content="Bash Script zur Umwandlung einer einfach strukturierten CSV-Datei in eine HTML-Tabelle">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+  <link rel="stylesheet" href="css/html5-reset.css">
+  <link rel="stylesheet" href="css/table.css">
+  <link rel="stylesheet" href="css/standard.css">
+  <link rel="stylesheet" href="css/code-highlighter.css">
+  <style type="text/css">
+  </style>
+</head>
+<body>
+<h1>CSV nach HTML</h1>
+<p><strong>Worum geht es?</strong><br>Die Linux-Kommandozeile ist ein vielfach unterschätztes, aber sehr vielseitiges und äusserst leistungsfähiges Instrument, um mit Dateien umzugehen. Es gibt Werkzeuge für beinahe jeden Zweck. Meine Idee war, ohne zusätzliche Installation eines spazialisierten Tools, allein mit dem, was uns die Shell standardmässig zur Verfügung stellt, eine Konversion von CSV in eine HTML-Tabelle zu bewerkstelligen. Da fast jedes Problem schon einmal irgendwo gelöst und beinahe jede Frage schon einmal beantwortet wurde, begann ich damit nicht bei Null, sondern auf <a href="https://unix.stackexchange.com/questions/105501/convert-csv-to-html-table">unix.stackexchange.com/questions/105501/convert-csv-to-html-table</a>. Den dort vorgefundenen Code habe ich als Grundlage benutzt.</p>
+<h2>Bash Script zur Umwandlung einer einfach strukturierten CSV-Datei in eine HTML-Tabelle</h2>
+<p>Das Script zum Herunterladen finden Sie auf GitHub <a href="https://github.com/calyaconsult/csv2html/blob/main/resources/bash-script.sh">bash-script.sh</a></p>
+<div class="highlight"><pre><span></span><span class="c1"># <strong>Beispiel 1:</strong> Daten als String; as Zeilenende wird zur Veranschaulichung mit <code>⁋</code> markiert</span>
+<span class="c1"># In der Praxis eignet sich <code>⁋</code> nicht. Markieren Sie das Zeilenende besser mit <code>_</code> oder einem anderen Zeichen, das in den Daten nicht vorkommt.</span>
+<span class="c1"># <code>"A,B,C,D_E,F,G,H_I,J,K,L_M,N,O,P_Q,R,S,T_U,V,X,Y"</code></span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;A,B,C,D⁋E,F,G,H&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>⁋<span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/,/&lt;\/td&gt;&lt;td&gt;/g&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/^\(.*\)$/&lt;tr&gt;&lt;td&gt;\1&lt;\/td&gt;&lt;\/tr&gt;/&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;1 s/^/&lt;table&gt;\n/&#39;</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;&lt;/table&gt;&#39;</span>
+
+<span class="c1"># <strong>Beispiel 2:</strong> Ganze Datei lesen</span>
+<span class="c1"># Immer daran denken, dass sich am Beginn der Datei ein BOM und am Zeilenende ein &#39;\r&#39; verstecken könnte!</span>
+
+<span class="nv">FILE</span><span class="o">=</span><span class="s1">&#39;sample.csv&#39;</span>
+cat<span class="w"> </span><span class="nv">$FILE</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/\r//&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/,/&lt;\/td&gt;&lt;td&gt;/g&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/^\(.*\)$/&lt;tr&gt;&lt;td&gt;\1&lt;\/td&gt;&lt;\/tr&gt;/&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/&quot;//g&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;1 s/\xEF\xBB\xBF//&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;1 s/td/th/g&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;1 s/^/&lt;table&gt;\n/&#39;</span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;&lt;/table&gt;&#39;</span>
+
+<span class="s1"># Die einzelnen Schritte:</span>
+<span class="s1">cat $FILE | \</span> <span class="c1"># Datei einlesen</span>
+<span class="s1">    sed &#39;</span>s/<span class="se">\r</span>//<span class="s1">&#39; | \</span> <span class="c1"># CR entfernen</span>
+<span class="s1">    sed &#39;</span>s/,/&lt;<span class="se">\/</span>td&gt;&lt;td&gt;/g<span class="s1">&#39; | \</span> <span class="c1"># Kommas durch <code>&lt;/td&gt;&lt;td&gt;</code> ersetzen</span>
+<span class="s1">    sed &#39;</span>s/^<span class="se">\(</span>.*<span class="se">\)</span>$/&lt;tr&gt;&lt;td&gt;<span class="se">\1</span>&lt;<span class="se">\/</span>td&gt;&lt;<span class="se">\/</span>tr&gt;/<span class="s1">&#39; | \</span> <span class="c1"># Die ganze Zeile in <code>&lt;tr&gt;&lt;td&gt; ... &lt;/td&gt;&lt;/tr&gt;</code> einpacken</span>
+<span class="s1">    sed &#39;</span>s/<span class="se">&quot;</span>//g<span class="s1">&#39; | \</span> <span class="c1"># Double Quotes ersetzen</span>
+<span class="s1">    sed &#39;</span><span class="m">1</span><span class="w"> </span>s/<span class="se">\x</span>EF<span class="se">\x</span>BB<span class="se">\x</span>BF//<span class="s1">&#39; | \</span> <span class="c1"># BOM eliminieren</span>
+<span class="s1">    sed &#39;</span><span class="m">1</span><span class="w"> </span>s/td/th/g<span class="s1">&#39; | \</span> <span class="c1"># In der ersten Zeile <code>&lt;td&gt;</code> durch <code>&lt;th&gt;</code> ersetzen</span>
+<span class="s1">    sed &#39;</span><span class="m">1</span><span class="w"> </span>s/^/&lt;table&gt;<span class="se">\n</span>/<span class="s1">&#39;; \</span> <span class="c1"># <code>&lt;table&gt;</code> an den Anfang setzen</span>
+<span class="s1">    echo &#39;</span>&lt;/table&gt;<span class="s1">&#39;</span><span class="w"> </span><span class="c1"># <code>&lt;table&gt;</code> ans Ende setzen</span>
+</pre></div>
+<p>&nbsp;</p>
+<h3>Es geht auch mit PowerShell</h3>
+<p>Spasseshalber habe ich das Bash Script von Google Gemini in ein PowerShell Script übersetzen lassen. Nachdem ich einige wenige Probleme ausgebügelt hatte, funktionierte das Script und lieferte das selbe Resultat wie sein Bash-Geschwister. Den Code finden Sie auf Github <a href="https://github.com/calyaconsult/csv2html/blob/main/resources/csv-to-html.ps1">github.com/calyaconsult/csv2html/blob/main/resources/csv-to-html.ps1</a></p>
+<h3>Inhalt der Datei "sample.csv"</h3>
+<p>Es handelt sich um die ersten Zeilen einer weitaus umfangreicheren Datei, die mit Microsoft Powershell erstellt wurde. Die vollständige Datei findet sich hier auf <a href="https://github.com/calyaconsult/csv2html/blob/main/csv/project-file-details-20230821-0647.csv">GitHub</a></p>
+<div><pre>
+  "LastWriteTime","Size","Filename","Directory","Full Filename"
+  "21.08.2023 06:41:58","7788","files-last-seven-days-20230821-0641.txt","Documents","C:\Users\HP\Documents\files-last-seven-days-20230821-0641.txt"
+  "21.08.2023 06:45:28","218040","files-since-Aug01.csv","Documents","C:\Users\HP\Documents\files-since-Aug01.csv"
+  "21.08.2023 06:44:54","182","files-since-date.ps1","Documents","C:\Users\HP\Documents\files-since-date.ps1"
+  "21.08.2023 06:46:34","1369","generate_file_details.ps1","Documents","C:\Users\HP\Documents\generate_file_details.ps1"
+  "19.08.2023 08:09:56","3298","data-proposition-A4CB21.txt","Business Development","C:\Users\HP\Documents\Current Project\Business Development\data-proposition-A4CB21.txt"
+  "19.08.2023 07:43:20","5137","location-scouting-A4CB21.html","Business Development","C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.html"
+  "19.08.2023 07:23:37","3742","location-scouting-A4CB21.txt","Business Development","C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.txt"
+  "19.08.2023 07:47:34","4813","location-scouting-A4CB21.html","Business Development","C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.html"
+  "19.08.2023 07:31:14","3630","location-scouting-A4CB21.txt","Business Development","C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.txt"
+</pre></div>
+<p class="klein">☛ Das hier vorgestellte Script soll nur zeigen, wie man auf der Linux-Kommandozeile im Prinzip selbst Aufgaben wie die Umwandlung einer CSV-Datei in eine HTML-Tabelle bewältigen kann. Für den produktiven Einsatz ist es nicht gedacht. CSV ist weitaus komplizierter als die hier zugrunde liegenden Daten, und es ist ratsam, sich bei der Umwandlung von CSV in HTML an professionelle Tools zu halten.</p>
+<p class="klein"><pre>
+  Bash syntax highlighting generated by <a href="https://pygments.org/">Pygments</a>
+  Copyright 2006-2023 by the Pygments team.
+  Licensed under the BSD license, see <a href="https://github.com/pygments/pygments/blob/master/LICENSE">LICENSE</a> for details.
+</pre></p>
+<p>&nbsp;</p>
+<h3>Aus CSV generierte Tabellen</h3>
+<div class="result">
+  <h4>Tabelle aus Beispiel 1</h4>
+  <table class="customTable" id="table-bsp-1">
+  <tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+  <tr><td>E</td><td>F</td><td>G</td><td>H</td></tr>
+  <tr><td>I</td><td>J</td><td>K</td><td>L</td></tr>
+  <tr><td>M</td><td>N</td><td>O</td><td>P</td></tr>
+  <tr><td>Q</td><td>R</td><td>S</td><td>T</td></tr>
+  <tr><td>U</td><td>V</td><td>X</td><td>Y</td></tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4>Tabelle aus Beispiel 2 <span class="ntext">(Datei <code>sample.csv</code>)</span></h4>
+  <table class="customTable" id="table-bsp-2">
+  <tr><th>LastWriteTime</th><th>Size</th><th>Filename</th><th>Directory</th><th>Full Filename</th></tr>
+  <tr><td>21.08.2023 06:41:58</td><td>7788</td><td>files-last-seven-days-20230821-0641.txt</td><td>Documents</td><td>C:\Users\HP\Documents\files-last-seven-days-20230821-0641.txt</td></tr>
+  <tr><td>21.08.2023 06:45:28</td><td>218040</td><td>files-since-Aug01.csv</td><td>Documents</td><td>C:\Users\HP\Documents\files-since-Aug01.csv</td></tr>
+  <tr><td>21.08.2023 06:44:54</td><td>182</td><td>files-since-date.ps1</td><td>Documents</td><td>C:\Users\HP\Documents\files-since-date.ps1</td></tr>
+  <tr><td>21.08.2023 06:46:34</td><td>1369</td><td>generate_file_details.ps1</td><td>Documents</td><td>C:\Users\HP\Documents\generate_file_details.ps1</td></tr>
+  <tr><td>19.08.2023 08:09:56</td><td>3298</td><td>data-proposition-A4CB21.txt</td><td>Business Development</td><td>C:\Users\HP\Documents\Current Project\Business Development\data-proposition-A4CB21.txt</td></tr>
+  <tr><td>19.08.2023 07:43:20</td><td>5137</td><td>location-scouting-A4CB21.html</td><td>Business Development</td><td>C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.html</td></tr>
+  <tr><td>19.08.2023 07:23:37</td><td>3742</td><td>location-scouting-A4CB21.txt</td><td>Business Development</td><td>C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.txt</td></tr>
+  <tr><td>19.08.2023 07:47:34</td><td>4813</td><td>location-scouting-A4CB21.html</td><td>Business Development</td><td>C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.html</td></tr>
+  <tr><td>19.08.2023 07:31:14</td><td>3630</td><td>location-scouting-A4CB21.txt</td><td>Business Development</td><td>C:\Users\HP\Documents\Current Project\Business Development\location-scouting-A4CB21.txt</td></tr>
+  </table>
+</div>
+</body>
+</html>

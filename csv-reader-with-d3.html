@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+  <html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <title>CSV Parsing with D3.js</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="css/html5-reset.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/standard.css">
+    <script src="js/to-table.js"></script>
+    <style>
+    </style>
+  </head>
+<body>
+  <h1>CSV Parsing with D3.js</h1>
+  <p>Die Bibliothek <a href="https://d3js.org/">D3.js</a> stellt zahlreiche Hilfsmittel zur Datenvisualisierung mittesl Javascript zur Verfügung. Sie enthält unter anderem auch einen Parser für CSV und TSV.
+    Link <a href="https://d3js.org/d3-dsv">d3js.org/d3-dsv</a></p>
+  <p>See: https://sebhastian.com/read-csv-javascript/</p>
+  <p>D3.js erzeugt mit der Methode <code>.csvParse()</code> ein JSON-Object. Dieses muss dann noch in HTML überführt werden.</p>
+  <p>Im vorliegenden Beispiel wurde das CSV statisch als String im Quellcode der Seite abgelegt und als Funktion zur Erzeugung der HTML-Tabelle wurde eine leicht angepasste Variante der Funktion aus <a href="csv-reader-with-papaparse.html">csv-reader-with-papaparse.html</a> benutzt.
+  <hr>
+  <div id="json-div"></div>
+  <div id="result"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+  const csvString = `LastWriteTime,Size,Filename,Directory,Full Filename
+21.08.2023 06:41:58,7788,files-last-seven-days-20230821-0641.txt,Documents,C:\\Users\\HP\\Documents\\files-last-seven-days-20230821-0641.txt
+21.08.2023 06:45:28,218040,files-since-Aug01.csv,Documents,C:\\Users\\HP\\Documents\\files-since-Aug01.csv
+21.08.2023 06:44:54,182,files-since-date.ps1,Documents,C:\\Users\\HP\\Documents\\files-since-date.ps1
+21.08.2023 06:46:34,1369,generate_file_details.ps1,Documents,C:\\Users\\HP\\Documents\\generate_file_details.ps1
+19.08.2023 08:09:56,3298,data-proposition-A4CB21.txt,Business Development,C:\\Users\\HP\\Documents\\Current Project\\Business Development\\data-proposition-A4CB21.txt
+19.08.2023 07:43:20,5137,location-scouting-A4CB21.html,Business Development,C:\\Users\\HP\\Documents\\Current Project\\Business Development\\location-scouting-A4CB21.html
+19.08.2023 07:23:37,3742,location-scouting-A4CB21.txt,Business Development,C:\\Users\\HP\\Documents\\Current Project\\Business Development\\location-scouting-A4CB21.txt
+19.08.2023 07:47:34,4813,location-scouting-A4CB21.html,Business Development,C:\\Users\\HP\\Documents\\Current Project\\Business Development\\location-scouting-A4CB21.html
+19.08.2023 07:31:14,3630,location-scouting-A4CB21.txt,Business Development,C:\\Users\\HP\\Documents\\Current Project\\Business Development\\location-scouting-A4CB21.txt
+`;
+  const res = d3.csvParse(csvString);
+  document.getElementById("json-div").innerHTML = `<h3>Aus CSV generiertes JSON-Objekt</h3><pre id="json"></pre>`;
+  document.getElementById("json").textContent = JSON.stringify(res.slice(0,2),null,2).replace(']','...]');
+  generateTable("D3",res);
+</script>
+</body>
+</html>
